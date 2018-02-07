@@ -2,12 +2,18 @@
 
 DEMO of a simple web editor for Reveal.js using ACE Editor and Markdown, written in NodeJS.
 
-^^^ Inspired by Hacker Slides
+^^^ Inspired by:
+* https://github.com/hakimel/reveal.js
+* https://github.com/jacksingleton/hacker-slides
+* https://github.com/ryanj/gist-reveal
 
 ## Features
-- Edit Mode
-- Preview Mode
-- (Todo) Save as Gist or Snippet
+- Self contained simple web server
+- Defaults to Edit Mode
+- Switch to Fullscreen Preview Mode
+- (Todo) AutoSave draft to Browser storage
+- (Todo) Ability to persist as Gist or Snippet
+- (Todo) Ability to Preview from Gist or Snippet ID
 
 ## Install
 ```
