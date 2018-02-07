@@ -1,13 +1,13 @@
 {
-  "name": "acereveal",
+  "name": "slides",
   "version": "0.0.1",
-  "description": "",
+  "description": "DEMO of a simple web editor for Reveal.js using ACE Editor and Markdown, written in NodeJS.",
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
-  "author": "",
+  "author": "https://github.com/yoosername",
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.2"
