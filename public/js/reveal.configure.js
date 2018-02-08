@@ -25,18 +25,41 @@ function insertMarkdownFragment(markdown) {
 
 }
 
-// Add the HTML section fragment for Markdown support
-// See Reveal.getIndices()
-function scrollToCurrentSlide() {
-  console.log("[Viewer] scrolling to current slide");
-  var i = Reveal.getIndices();
-  if(i && (i.h && i.v && i.f)) Reveal.slide(i.h, i.v, i.f);
-  else Reveal.slide(0,0,0);
+function getCurrentRevealSlideIndex(){
+  return Reveal.getIndices();
 }
 
-function loadMarkdown(args) {
-  console.log("[Viewer] insertMarkdownFragment: ", args);
-  insertMarkdownFragment(args.markdown);
+function getSavedSlide(){
+  var slide = localStorage.getItem("slide");
+  try{
+    slide = JSON.parse(slide);
+  }catch(e){}
+  return slide;
+}
+
+function saveToLocalStorage(){
+  var slideIndex = JSON.stringify(getCurrentRevealSlideIndex());
+  console.log("[Editor] Saving slide info to localstorage: ", slideIndex);
+  localStorage.setItem("slide", slideIndex)
+}
+
+// Add the HTML section fragment for Markdown support
+// See Reveal.getIndices()
+function scrollToSavedSlide() {
+  var i = getSavedSlide();
+  var hor = (i && i.h) ? i.h : 0;
+  var ver = (i && i.v) ? i.v : 0;
+
+  console.log("[Viewer] scrolling to slide: ", hor, ":",ver);
+  Reveal.slide(hor, ver, 0);
+}
+
+function getMarkdownFromLocalStorage() {
+  console.log("[Viewer] attempting to load markdown from local storage");
+  return localStorage.getItem("markdown");
+}
+
+function initializeRevealMarkdown() {
   console.log("[Viewer] initializing RevealMarkdown");
   RevealMarkdown.initialize();
 }
@@ -44,9 +67,15 @@ function loadMarkdown(args) {
 // Update the fragment, initialize and go (back) to current slide
 // RevealMarkdown refers to:
 //      https://github.com/hakimel/reveal.js/blob/master/plugin/markdown/markdown.js
-function reloadMarkdown(args) {
-  loadMarkdown(args);
-  scrollToCurrentSlide();
+function loadMarkdown(markdown) {
+  insertMarkdownFragment(markdown);
+  initializeRevealMarkdown();
+}
+
+function reloadMarkdown() {
+  var markdown = getMarkdownFromLocalStorage();
+  loadMarkdown(markdown);
+  scrollToSavedSlide();
 }
 
 function inIframe() {
@@ -61,7 +90,7 @@ function inIframe() {
 console.log("[Viewer] initializing Reveal.js (embedded="+inIframe()+")");
 Reveal.initialize({
   embedded : (inIframe() ? true : false),
-  parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+  parallaxBackgroundImage: '/images/ghost-nebula.jpg',
   parallaxBackgroundSize: '2100px 900px',
   //parallaxBackgroundImage: "https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg",
   dependencies: [
@@ -70,19 +99,15 @@ Reveal.initialize({
     { src: 'plugin/notes/notes.js', async: true },
     { src: 'plugin/highlight/highlight.js', async: true, callback: function() {
       hljs.initHighlightingOnLoad();
-      firstLoad();
+      reloadMarkdown();
+      if(!inIframe()){
+        $("#editButton button").on("click",function(){window.location.href='/'});
+      }else{
+        $("#editButton button").hide();
+      }
     } }
   ]
 });
-
-// Add fragment once initially
-// Notify that the iframe is ready
-function firstLoad(){
-    console.log("[Viewer] Attempt to load markdown from cache");
-    var cached = localStorage.getItem("markdown");
-    if(cached) reloadMarkdown({markdown:cached});
-    else reloadMarkdown();
-}
 
 // Custom Reveal RPC handler
 // See: [989] : Reveal.setupPostMessage()

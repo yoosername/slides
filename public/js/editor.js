@@ -24,10 +24,7 @@ function iframeReadyHandler(){
 function reloadPreview(){
   console.log("[Editor] Notifying Reveal.js frame to reload");
   revealRpc({
-       method: 'reloadMarkdown',
-       args: [
-         { "markdown" : editor.getSession().getValue() }
-       ]
+       method: 'reloadMarkdown'
   });
 }
 
@@ -53,6 +50,16 @@ function revealRpc(msg){
   $('#reveal')[0].contentWindow.postMessage(JSON.stringify(msg), window.location.origin);
 }
 
+function getCurrentCursor(){
+  return editor.getCursorPosition();
+}
+
+function getCurrentSlide(){
+  var cursorRow = getCurrentCursor().row;
+  var currentSlide = getCurrentEditorSlide(cursorRow);
+  return currentSlide;
+}
+
 function setupACEEditorSession(){
   editor = ace.edit("editor");
   editor.setTheme("ace/theme/dracula");
@@ -67,12 +74,12 @@ function setupACEEditorSession(){
   });
 
   editor.getSession().selection.on('changeCursor', function(e) {
-      var cursorRow = editor.getCursorPosition().row;
-      var currentSlide = getCurrentEditorSlide(cursorRow);
-      revealRpc({
-        method: 'slide',
-        args: [currentSlide.h, currentSlide.v]
-      });
+    console.log("[Editor] cursor moved - notify slide to update");
+    var currentSlide = getCurrentSlide();
+    revealRpc({
+      method: 'slide',
+      args: [currentSlide.h, currentSlide.v]
+    });
   });
 
   setupNavButtons();
@@ -81,8 +88,10 @@ function setupACEEditorSession(){
 }
 
 function saveToLocalStorage(){
-  console.log("[Editor] Saving Markdown to localstorage");
+  console.log("[Editor] Saving Markdown, CurrentSlide and CursorPosition to localstorage");
   localStorage.setItem("markdown", editor.getSession().getValue());
+  localStorage.setItem("slide", JSON.stringify(getCurrentSlide()));
+  localStorage.setItem("cursor", JSON.stringify(getCurrentCursor()))
 }
 
 function saveAndReload() {
