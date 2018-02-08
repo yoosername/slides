@@ -1,11 +1,23 @@
 body {
   margin: 0 0 0 0;
 }
+#header {
+  padding: 0px !important;
+}
+#header .navbar-brand{
+  color: #fff;
+  font-weight: bold;
+  font-size: 24px;
+}
+#container {
+  padding: 0px !important;
+}
 #editor {
   position: absolute;
-  width: 40%;
+  width: 45%;
   height: 100%;
   font-size: 16px;
+  border-right: 4px solid #6c757d;
 }
 #editor textarea {
   width: 100%;
@@ -14,8 +26,8 @@ body {
 }
 #viewer {
   position: absolute;
-  left: 40%;
-  top: 0;
+  left: 45%;
+  top: 60px;
   right: 0;
   bottom: 0;
 }

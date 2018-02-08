@@ -1,16 +1,59 @@
 var editor, wto;
 
-$.get("/live.md",function(contents){
-  console.log("[Editor] Loading markdown from /live.md");
-  $("#editor").html(contents);
-  setupSession();
-});
+initializeEditor();
+
+function initializeEditor(){
+  var saved = localStorage.getItem("markdown");
+  if( saved ){
+    console.log("[Editor] Autosave detected, loading it");
+    $("#editor").html(saved);
+    setupACEEditorSession();
+  }else{
+    $.get("/default.md",function(contents){
+      console.log("[Editor] No auto save - fetch from /default.md");
+      $("#editor").html(contents);
+      setupACEEditorSession();
+    });
+  }
+}
+
+function iframeReadyHandler(){
+  reloadPreview();
+}
+
+function reloadPreview(){
+  console.log("[Editor] Notifying Reveal.js frame to reload");
+  revealRpc({
+       method: 'reloadMarkdown',
+       args: [
+         { "markdown" : editor.getSession().getValue() }
+       ]
+  });
+}
+
+function setupNavButtons(){
+  $("#previewButton").on("click", function(){
+    gotoPreviewMode();
+  });
+
+  $("#saveButton").on("click", function(){
+    save();
+  });
+}
+
+function gotoPreviewMode(){
+  window.location.href = '/preview';
+}
+
+function save(){
+  window.alert("not implemented yet!!");
+}
 
 function revealRpc(msg){
   $('#reveal')[0].contentWindow.postMessage(JSON.stringify(msg), window.location.origin);
 }
 
-function setupSession(){
+function setupACEEditorSession(){
   editor = ace.edit("editor");
   editor.setTheme("ace/theme/dracula");
   editor.getSession().setMode("ace/mode/markdown");
@@ -31,25 +74,20 @@ function setupSession(){
         args: [currentSlide.h, currentSlide.v]
       });
   });
+
+  setupNavButtons();
+  //reloadPreview();
+
+}
+
+function saveToLocalStorage(){
+  console.log("[Editor] Saving Markdown to localstorage");
+  localStorage.setItem("markdown", editor.getSession().getValue());
 }
 
 function saveAndReload() {
-
-  console.log("[Editor] Saving Markdown");
-  $.ajax({
-      type: "POST",
-      url: "/reload",
-      data: JSON.stringify({"markdown" : editor.getSession().getValue()}),
-      contentType: "application/json",
-      dataType: "json"
-  })
-  .always(function(res){
-    console.log("[Editor] Notifying Reveal.js frame to reload");
-    revealRpc({
-      method: 'reloadMarkdown'
-    });
-  })
-
+  saveToLocalStorage();
+  reloadPreview();
 }
 
 // Work out where we are in the slides from the cursor position in the editor

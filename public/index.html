@@ -2,16 +2,34 @@
 <html lang="en">
 <head>
   <title>Reveal Presentation Edit</title>
+  <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/editor.css">
 </head>
 <body>
 
-  <div id="editor"></div>
-  <div id="viewer">
-    <iframe id="reveal" src="/lib/reveal/index.html"></iframe>
+  <div id="header" class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <a class="navbar-brand" href="#">Slides</a>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01"></div>
+        <!--<button id="saveButton" class="btn btn-outline-success my-2 my-sm-0 right">Save</button>-->
+        <button id="previewButton" class="btn btn-outline-success my-2 my-sm-0">Preview</button>
+      </div>
+    </nav>
+  </div>
+  <div id="container" class="container-fluid">
+    <div id="editor"></div>
+    <div id="viewer">
+      <iframe id="reveal" src="/lib/reveal/index.html"></iframe>
+    </div>
   </div>
 
+
   <script src="/lib/jquery/jquery.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/lib/bootstrap/dist/js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
   <script src="/lib/ace/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
   <script src="/js/editor.js" type="text/javascript" charset="utf-8"></script>
 
