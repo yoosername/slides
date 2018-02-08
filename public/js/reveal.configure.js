@@ -1,46 +1,48 @@
 // Add the HTML section fragment for Markdown support
 function insertMarkdownFragment(markdown) {
-  console.log("[Viewer] inserting markdown fragment");
-  if(!markdown){
-    console.log("[Viewer] markdown not specified, loading default");
-    $.get('/default.md', function(res){
-      var fragment = RevealMarkdown.slidify(res,{
+
+  return new Promise(function(resolve, reject) {
+
+    console.log("[Viewer] inserting markdown fragment");
+    if(!markdown){
+      console.log("[Viewer] markdown not specified, loading default");
+      $.get('/default.md', function(md){
+        console.log("[Viewer] default markdown loaded");
+
+        var fragment = RevealMarkdown.slidify(md,{
+          separator: '^\r?\n---\r?\n$',
+          verticalSeparator: '^\r?\n--\r?\n$',
+          notesSeparator: 'notes?:'
+        });
+        //console.log("[Viewer] fragment:",fragment);
+        $('.slides').html(fragment);
+        resolve(fragment);
+      })
+    }else{
+      console.log("[Viewer] processing markdown");
+      var fragment = RevealMarkdown.slidify(markdown,{
         separator: '^\r?\n---\r?\n$',
         verticalSeparator: '^\r?\n--\r?\n$',
         notesSeparator: 'notes?:'
       });
       $('.slides').html(fragment);
-      //console.log($('.slides').html());
-    })
-  }else{
-    console.log("[Viewer] processing markdown");
-    var fragment = RevealMarkdown.slidify(markdown,{
-      separator: '^\r?\n---\r?\n$',
-      verticalSeparator: '^\r?\n--\r?\n$',
-      notesSeparator: 'notes?:'
-    });
-    $('.slides').html(fragment);
-    //console.log($('.slides').html());
-  }
+      resolve(fragment);
+    }
 
-}
+  });
 
-function getCurrentRevealSlideIndex(){
-  return Reveal.getIndices();
 }
 
 function getSavedSlide(){
-  var slide = localStorage.getItem("slide");
+  var slide = localStorage.getItem("reveal.slide");
   try{
     slide = JSON.parse(slide);
   }catch(e){}
   return slide;
 }
 
-function saveToLocalStorage(){
-  var slideIndex = JSON.stringify(getCurrentRevealSlideIndex());
-  console.log("[Editor] Saving slide info to localstorage: ", slideIndex);
-  localStorage.setItem("slide", slideIndex)
+function saveCurrentSlideToLocalStorage(slide){
+  localStorage.setItem("reveal.slide", JSON.stringify(slide));
 }
 
 // Add the HTML section fragment for Markdown support
@@ -56,7 +58,7 @@ function scrollToSavedSlide() {
 
 function getMarkdownFromLocalStorage() {
   console.log("[Viewer] attempting to load markdown from local storage");
-  return localStorage.getItem("markdown");
+  return localStorage.getItem("reveal.markdown");
 }
 
 function initializeRevealMarkdown() {
@@ -64,12 +66,33 @@ function initializeRevealMarkdown() {
   RevealMarkdown.initialize();
 }
 
+function gotoEditMode(){
+  console.log("[Viewer] going to edit mode");
+  window.location.href='/';
+}
+
+function setupHotkeys(){
+  console.log("[Viewer] initializing hotkeys");
+  var listener = new window.keypress.Listener();
+  listener.simple_combo("e", function() {
+    console.log("[Viewer] user pressed 'e' hotkey, switching to edit mode");
+    gotoEditMode();
+  });
+}
+
+function setupEditButton(){
+  console.log("[Viewer] initializing edit button");
+  $("#editButton").show();
+  $("#editButton button").on("click",gotoEditMode);
+}
+
 // Update the fragment, initialize and go (back) to current slide
 // RevealMarkdown refers to:
 //      https://github.com/hakimel/reveal.js/blob/master/plugin/markdown/markdown.js
 function loadMarkdown(markdown) {
-  insertMarkdownFragment(markdown);
-  initializeRevealMarkdown();
+  insertMarkdownFragment(markdown).then(function(){
+    initializeRevealMarkdown();
+  });
 }
 
 function reloadMarkdown() {
@@ -99,15 +122,24 @@ Reveal.initialize({
     { src: 'plugin/notes/notes.js', async: true },
     { src: 'plugin/highlight/highlight.js', async: true, callback: function() {
       hljs.initHighlightingOnLoad();
-      reloadMarkdown();
-      if(!inIframe()){
-        $("#editButton button").on("click",function(){window.location.href='/'});
-      }else{
-        $("#editButton button").hide();
-      }
+      scrollToSavedSlide();
     } }
   ]
 });
+
+Reveal.addEventListener( 'ready', function( event ) {
+  console.log("[Viewer] Reveal Initialized and ready");
+  reloadMarkdown();
+  if(!inIframe()){
+    setupEditButton();
+    setupHotkeys();
+  }
+} );
+
+Reveal.addEventListener( 'slidechanged', function( event ) {
+  console.log("[Viewer] slide changed saving slide as: ", event.indexh, ":", event.indexv);
+  saveCurrentSlideToLocalStorage({"h":event.indexh, "v":event.indexv});
+} );
 
 // Custom Reveal RPC handler
 // See: [989] : Reveal.setupPostMessage()

@@ -1,32 +1,33 @@
-# Space
-> In a Nebula far far away...
+# Slides
+> In a Presentation far far away...
 
 ---
 
-## Some crazyness emerged
+## fancy behaviour emerged
 > Like...
 
 --
 
-* A vertical  section yo
+* Vertical sections
 
 --
 
-* and another vertical
+* At least two of them
 
 --
 
-* and another
+* Maybe three!!
 
 --
 
-And an image:
-![bingo](/images/Nikola Tesla.svg)
+Then an inline image:
+![bingo](/images/galaxy.jpg)
 
 ---
 
 # Fin
-> and we're done!!
+> and just like that.... we're done!!
 
-ps hit 's' to see the presenter deck with associated Note
-Note: Here is some text just for me
+`ps hit 's' to see the presenter deck with associated Note`
+
+Note: Here is some text just for me as the presenter

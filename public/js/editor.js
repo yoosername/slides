@@ -3,7 +3,7 @@ var editor, wto;
 initializeEditor();
 
 function initializeEditor(){
-  var saved = localStorage.getItem("markdown");
+  var saved = localStorage.getItem("reveal.markdown");
   if( saved ){
     console.log("[Editor] Autosave detected, loading it");
     $("#editor").html(saved);
@@ -83,14 +83,13 @@ function setupACEEditorSession(){
   });
 
   setupNavButtons();
-  //reloadPreview();
 
 }
 
 function saveToLocalStorage(){
   console.log("[Editor] Saving Markdown, CurrentSlide and CursorPosition to localstorage");
-  localStorage.setItem("markdown", editor.getSession().getValue());
-  localStorage.setItem("slide", JSON.stringify(getCurrentSlide()));
+  localStorage.setItem("reveal.markdown", editor.getSession().getValue());
+  localStorage.setItem("reveal.slide", JSON.stringify(getCurrentSlide()));
   localStorage.setItem("cursor", JSON.stringify(getCurrentCursor()))
 }
 
