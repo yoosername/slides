@@ -1,15 +1,22 @@
 {
-  "name": "slides",
-  "version": "0.0.1",
-  "description": "DEMO of a simple web editor for Reveal.js using ACE Editor and Markdown, written in NodeJS.",
-  "main": "index.js",
-  "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
-  },
-  "author": "https://github.com/yoosername",
-  "license": "MIT",
+  "name": "revealer",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "express": "^4.16.2"
+    "bootstrap": "4.0.0",
+    "codemirror": "^5.34.0",
+    "open-iconic": "^1.1.1",
+    "react": "^16.0.0",
+    "react-codemirror2": "^4.0.0",
+    "react-dom": "^16.0.0",
+    "react-scripts": "^1.1.1",
+    "reactstrap": "next",
+    "three": "^0.90.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   }
 }

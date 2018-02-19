@@ -1,0 +1,14 @@
+.Header {
+  /* background-color: #6c757d; */
+  background-color: #f5f2f0;
+}
+
+.oi-fullscreen-enter{
+  color: #17a2b8;
+}
+
+.Brand {
+  color: #17a2b8;
+  font-size: 24px;
+  font-weight: 600;
+}

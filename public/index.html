@@ -1,36 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>Reveal Presentation Edit</title>
-  <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/css/editor.css">
-</head>
-<body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
 
-  <div id="header" class="container-fluid">
-    <nav class="navbar navbar-expand-lg navbar-light bg-dark">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <a class="navbar-brand" href="#">Slides</a>
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo01"></div>
-        <!--<button id="saveButton" class="btn btn-outline-success my-2 my-sm-0 right">Save</button>-->
-        <button id="previewButton" class="btn btn-outline-success my-2 my-sm-0">Preview</button>
-      </div>
-    </nav>
-  </div>
-  <div id="container" class="container-fluid">
-    <div id="editor"></div>
-    <div id="viewer">
-      <iframe id="reveal" src="/lib/reveal/index.html"></iframe>
-    </div>
-  </div>
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>Slider</title>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
 
-  <script src="/lib/jquery/jquery.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/lib/bootstrap/dist/js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/lib/ace/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/js/editor.js" type="text/javascript" charset="utf-8"></script>
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
 
-</body>
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
 </html>

@@ -1,0 +1,11 @@
+.CodeMirror{
+  height: 100%;
+}
+
+.CodeMirror-gutter-wrapper{
+  left: -16px;
+}
+
+.Editor {
+  height: 86vh;
+}

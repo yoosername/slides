@@ -1,0 +1,17 @@
+.App {
+  padding: 0px !important;
+}
+
+.row {
+  background-color: #ddd;
+}
+
+.col{
+  padding-left: 5px!important;
+  padding-right: 5px!important;
+  max-width: 50%!important;
+}
+
+.CodeMirror{
+  text-align: left!important;
+}

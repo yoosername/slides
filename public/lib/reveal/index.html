@@ -4,58 +4,13 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>Reveal Presentation View</title>
+		<title>reveal.js</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/black.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
-
-		<style type="text/css">
-			body {
-				padding: 0px;
-				margin: 0px;
-			}
-
-			#editButton{
-				position: absolute;
-				z-index: 100;
-				width: 100%;
-				display: none;
-			}
-
-			#editButton button {
-		    cursor: pointer;
-		    color: #28a745;
-		    background-color: transparent;
-		    background-image: none;
-		    border-color: #28a745;
-		    display: inline-block;
-		    font-weight: 400;
-		    text-align: center;
-		    white-space: nowrap;
-		    vertical-align: middle;
-		    -webkit-user-select: none;
-		    -moz-user-select: none;
-		    -ms-user-select: none;
-		    user-select: none;
-		    padding: .375rem .75rem;
-		    font-size: 1rem;
-		    line-height: 1.5;
-		    border-radius: .25rem;
-		    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-		    float: right;
-				margin: 10px;
-				margin-right: 20px;
-			}
-			#editButton button:hover{
-				color: #fff;
-				background-color: #28a745;
-				border-color: #28a745;
-				text-decoration: none;
-			}
-		</style>
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -65,23 +20,30 @@
 			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
-
 	</head>
 	<body>
-
-		<div id="editButton"><button>Edit</button></div>
-
 		<div class="reveal">
-			<div class="slides"></div>
+			<div class="slides">
+				<section>Slide 1</section>
+				<section>Slide 2</section>
+			</div>
 		</div>
 
-		<script src="/lib/reveal/lib/js/head.min.js"></script>
-		<script src="/lib/reveal/js/reveal.js"></script>
-		<script src="/lib/reveal/plugin/markdown/marked.js"></script>
-		<script src="/lib/reveal/plugin/markdown/markdown.js"></script>
-		<script src="/lib/jquery/jquery.js" type="text/javascript" charset="utf-8"></script>
-		<script src="/lib/keypress/keypress-2.1.4.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="/js/reveal.configure.js"></script>
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
 
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
 	</body>
 </html>
