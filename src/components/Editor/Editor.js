@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import {Controlled as CodeMirror} from 'react-codemirror2';
+import React, { Component } from "react";
+import classnames from "classnames";
+import CodeMirror  from "codemirror";
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
@@ -11,49 +12,145 @@ import 'codemirror/mode/htmlmixed/htmlmixed.js';
 
 import './Editor.css';
 
-var wto;
+class Editor extends Component {
 
-export default class Editor extends Component {
+  $editorWrapper: ?HTMLDivElement;
 
-  constructor(props){
-    super();
+  constructor(props: Props) {
+    super(props);
 
-    this.instance = null;
-    this.id = props.id;
-    this.initialized = false;
+    this.onChange = props.onChange || (() => {});
+    this.onCursorActivity = props.onCursorActivity || (() => {});
+    this.cursor = null;
+    this.options = Object.assign({},props.options,{
+      enableCodeFolding: true,
+      extraKeys: {},
+      foldGutter: false,
+      lineNumbers: true,
+      lineWrapping: true,
+      matchBrackets: true,
+      mode: "javascript",
+      readOnly: false,
+      showAnnotationRuler: true,
+      theme: "material",
+      value: props.value || ""
+    });
+    this.state = {
+      editor: null
+    };
   }
 
-  static defaultProps = {
-    mode: "javascript",
-    theme: "darkrain",
-    lineNumbers: true
-  }
-
-  // This is fired when we receive props, so can detect if being made active or not
+  // called before we receive new props, e.g. a new value
   componentWillReceiveProps(nextProps) {
-    this.props.onReady( this.id, this.instance, nextProps.active );
+    if (!this.state.editor) {
+      return;
+    }
+    if(nextProps.value !== this.state.editor.getValue()){
+      this.setValue(nextProps);
+      this.setCursor(nextProps);
+      //this.scrollToLocation(nextProps);
+    }
+  }
+
+  // use this to prepare any UI specific tweaks before rendering
+  componentWillUpdate(nextProps) {
+
+    if (!this.state.editor) {
+      return false;
+    }
+
+  }
+
+  // Set the value of the editor
+  setValue(props){
+    //console.log("editor should be: ", this.state.editor.getValue());
+    this.state.editor.setValue(props.value);
+    //console.log("editor should show: ", props.value);
+  }
+
+  // Position the cursor in the editor
+  setCursor(props){
+    this.state.editor.setCursor(props.cursor);
+    this.cursor = this.state.editor.getCursor();
+  }
+
+  // Scroll to position
+  scrollToLocation(props){
+
+  }
+
+  // Actually configure Codemirror and store it in local state
+  setupEditor() {
+
+    const editor = CodeMirror(
+      this.$editorWrapper.querySelector(".editor-mount"),
+      this.options
+    );
+
+    window.editor = editor; //TODO remove after manual testing
+
+    editor.on("beforeChange", (editor, changes) => {
+      if(changes.origin === "setValue"){
+        return changes.cancel();
+      }
+      this.onChange(editor, editor.getValue())
+      //changes.cancel();
+    });
+
+    editor.on("cursorActivity", (editor) => {
+      if(this.cursor !== editor.getCursor()){
+        //console.log(editor.getCursor())
+        this.onCursorActivity(editor);
+      }
+    });
+
+    this.setState({ editor });
+
+    return editor;
+  }
+
+  // Once we have been added to DOM
+  componentDidMount() {
+    this.setupEditor();
+  }
+
+  // Once we are about to be removed from DOM
+  componentWillUnmount() {
+    if (this.state.editor) {
+      this.state.editor.destroy();
+      this.setState({ editor: null });
+    }
+  }
+
+  // Should we update ??
+  shouldComponentUpdate(nextProps, nextState){
+    if (!this.state.editor) {
+      return false;
+    }
+    if(nextProps.value !== this.state.editor.getValue()){
+      return true;
+    }
+    return false;
+  }
+
+  // If we did update and have new props / state
+  componentDidUpdate(prevProps, prevState) {
+    //console.log("we updated: ",this.props)
   }
 
   render() {
 
     return (
-      <CodeMirror className="Editor"
-        editorDidMount={editor => { this.instance = editor; }}
-        value={this.props.value}
-        options={this.props}
-        onBeforeChange={(editor, data, value) => {
-          this.props.setValue(this.id, value);
-        }}
-        onChange={(editor, data, value) => {
-          clearTimeout(wto);
-          wto = setTimeout(function() {
-            this.props.onChange(this.id, editor, value);
-          }.bind(this), 1000);
-        }}
-        onCursor={(editor, data) => {
-          this.props.onCursor(this.id, editor, data);
-        }}
-      />
+      <div
+        className={classnames("editor-wrapper")}
+        ref={c => (this.$editorWrapper = c)}
+      >
+        <div
+          className="editor-mount"
+        />
+      </div>
     );
   }
 }
+
+export default Editor;

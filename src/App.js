@@ -7,27 +7,20 @@ import Preview from './components/Preview/Preview';
 
 import './App.css';
 
-var DEFAULTS = {
-  "config": { data : new Request("/config.js"), initialized: false },
-  "content": { data : new Request("/presentation.html"), initialized : false }
-}
-
 export default class App extends Component {
 
   constructor(){
     super();
-    this.setValue = this.setValue.bind(this);
-    this.toggleTab = this.toggleTab.bind(this);
-    this.isActive = this.isActive.bind(this);
+
     this.state = {
       activeTab: 0,
-      config : "",
-      content : ""
+      configEditorValue : "",
+      configEditorCursorPos : {line: 0, ch: 0, sticky: null},
+      contentEditorValue : "",
+      contentEditorCursorPos : {line: 0, ch: 0, sticky: null}
     };
-  }
 
-  isActive(idx){
-    return ( this.state.activeTab === idx );
+    this.toggleTab = this.toggleTab.bind(this);
   }
 
   toggleTab(tab) {
@@ -38,52 +31,32 @@ export default class App extends Component {
     }
   }
 
-  onReady(id, editor, active){
-    // on first activation set Cursor ( workaround bug where code invisble till you click first time )
-    if( active && !DEFAULTS[id].initialized ){
-      console.log("Activating tab: ", id,editor.getCursor());
-      window.setTimeout(() => {
-        editor.setCursor(editor.getCursor());
-        DEFAULTS[id].initialized = true;
-      },0);
-    }
+  componentDidMount(){
+    this.hydrate("config:data", "/config.js", "configEditorValue");
+    this.hydrate("content:data", "/presentation.html", "contentEditorValue");
   }
 
-  onEditorChange(id, editor, value){
-    console.log("Saving contents of editor: ", id);
-    localStorage.setItem(id, value);
-  }
+  hydrate(cache_key, url, state_key){
 
-  onEditorCursor(id, editor, value){
-    console.log("cursor change detected in editor ("+id+"): ", value);
-  }
-
-  loadDefaultOrSavedEditorData(id){
     var self = this;
-    const cachedContent = localStorage.getItem(id);
-    if (cachedContent) {
-      console.log("Loaded editor from cache: ", id);
-      this.setState({ [id]: cachedContent });
+    var req = new Request(url);
+
+    const cached = localStorage.getItem(cache_key);
+    if (cached) {
+      console.log("[Editor] loaded from Localstorage using key: ", cache_key);
+      this.setState({ [state_key]: cached });
     }else{
-      console.log("No cache found loading using default content from ", DEFAULTS[id].data);
-      fetch(DEFAULTS[id].data)
+      console.log("[Editor] No cache found using key ("+cache_key+") loading default content from: ", url);
+      fetch(req)
       .then(response => {
         return response.text();
       })
-      .then(text => {
-        self.setState({ [id]: text });
-        localStorage.setItem(id, text);
+      .then(content => {
+        console.log("[Editor] default content loaded successfully ");
+        self.setState({ [state_key]: content });
+        localStorage.setItem(cache_key, content);
       })
     }
-  }
-
-  setValue(id, val){
-    this.setState({[id] : val});
-  }
-
-  componentDidMount(){
-    this.loadDefaultOrSavedEditorData("config");
-    this.loadDefaultOrSavedEditorData("content");
   }
 
   render() {
@@ -95,26 +68,28 @@ export default class App extends Component {
             <Header />
             <Tabbable activeTab={this.state.activeTab} toggle={this.toggleTab}>
               <Editor
-                active={this.isActive(0)}
                 id="config"
-                mode="javascript"
-                theme="material"
-                value={this.state.config}
-                setValue={this.setValue}
-                onReady={this.onReady}
-                onChange={this.onEditorChange}
-                onCursor={this.onEditorCursor}
+                value={this.state.configEditorValue}
+                cursor={this.state.configEditorCursorPos}
+                onChange={(editor, val)=>{
+                  this.setState({ "configEditorValue": val });
+                }}
+                onCursorActivity={(editor)=>{
+                  this.setState({ "configEditorCursorPos": editor.getCursor() });
+                  //console.log(this.state);
+                }}
               />
               <Editor
-                active={this.isActive(1)}
                 id="content"
-                mode="htmlmixed"
-                theme="material"
-                value={this.state.content}
-                setValue={this.setValue}
-                onReady={this.onReady}
-                onChange={this.onEditorChange}
-                onCursor={this.onEditorCursor}
+                value={this.state.contentEditorValue}
+                cursor={this.state.contentEditorCursorPos}
+                onChange={(editor, val)=>{
+                  this.setState({ "contentEditorValue": val });
+                }}
+                onCursorActivity={(editor)=>{
+                  this.setState({ "contentEditorCursorPos": editor.getCursor() });
+                  //console.log(this.state);
+                }}
               />
             </Tabbable>
           </Col>
