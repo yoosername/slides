@@ -14,9 +14,9 @@ export default class App extends Component {
 
     this.state = {
       activeTab: 0,
-      configEditorValue : "",
+      configEditorValue : "Config Editor",
       configEditorCursorPos : {line: 0, ch: 0, sticky: null},
-      contentEditorValue : "",
+      contentEditorValue : "Content Editor",
       contentEditorCursorPos : {line: 0, ch: 0, sticky: null}
     };
 
@@ -71,24 +71,38 @@ export default class App extends Component {
                 id="config"
                 value={this.state.configEditorValue}
                 cursor={this.state.configEditorCursorPos}
-                onChange={(editor, val)=>{
-                  this.setState({ "configEditorValue": val });
+                options={{
+                  mode: "javascript",
+                  theme: "material"
                 }}
-                onCursorActivity={(editor)=>{
-                  this.setState({ "configEditorCursorPos": editor.getCursor() });
-                  //console.log(this.state);
+                onBeforeChange={(editor)=>{
+                  this.setState({ "configEditorValue": editor.getValue() });
+                }}
+                onChange={(editor, val)=>{
+                  localStorage.setItem("config:data", val);
+                }}
+                onCursorActivity={(editor, cursor)=>{
+                  this.setState({ "configEditorCursorPos": editor.getCursor()  });
+                  //localStorage.setItem("config:cursor", JSON.stringify(editor.getCursor()));
                 }}
               />
               <Editor
                 id="content"
                 value={this.state.contentEditorValue}
                 cursor={this.state.contentEditorCursorPos}
-                onChange={(editor, val)=>{
-                  this.setState({ "contentEditorValue": val });
+                options={{
+                  mode: "htmlmixed",
+                  theme: "material"
                 }}
-                onCursorActivity={(editor)=>{
+                onBeforeChange={(editor)=>{
+                  this.setState({ "contentEditorValue": editor.getValue() });
+                }}
+                onChange={(editor, val)=>{
+                  localStorage.setItem("content:data", val);
+                }}
+                onCursorActivity={(editor, cursor)=>{
                   this.setState({ "contentEditorCursorPos": editor.getCursor() });
-                  //console.log(this.state);
+                  //localStorage.setItem("content:cursor", JSON.stringify(editor.getCursor()));
                 }}
               />
             </Tabbable>

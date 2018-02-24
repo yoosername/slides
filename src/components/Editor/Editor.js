@@ -12,6 +12,31 @@ import 'codemirror/mode/htmlmixed/htmlmixed.js';
 
 import './Editor.css';
 
+const DEFAULT_OPTIONS = {
+  enableCodeFolding: true,
+  extraKeys: {},
+  foldGutter: false,
+  lineNumbers: true,
+  lineWrapping: true,
+  matchBrackets: true,
+  mode: "javascript",
+  readOnly: false,
+  showAnnotationRuler: true,
+  theme: "material"
+};
+
+var Helper = (function () {
+    function Helper() {
+    }
+    Helper.equals = function (x, y) {
+        var _this = this;
+        var ok = Object.keys, tx = typeof x, ty = typeof y;
+        return x && y && tx === 'object' && tx === ty ? (ok(x).length === ok(y).length &&
+            ok(x).every(function (key) { return _this.equals(x[key], y[key]); })) : (x === y);
+    };
+    return Helper;
+}());
+
 class Editor extends Component {
 
   $editorWrapper: ?HTMLDivElement;
@@ -22,60 +47,25 @@ class Editor extends Component {
     this.onChange = props.onChange || (() => {});
     this.onCursorActivity = props.onCursorActivity || (() => {});
     this.cursor = null;
-    this.options = Object.assign({},props.options,{
-      enableCodeFolding: true,
-      extraKeys: {},
-      foldGutter: false,
-      lineNumbers: true,
-      lineWrapping: true,
-      matchBrackets: true,
-      mode: "javascript",
-      readOnly: false,
-      showAnnotationRuler: true,
-      theme: "material",
-      value: props.value || ""
-    });
-    this.state = {
-      editor: null
-    };
+    this.editor = null;
   }
 
   // called before we receive new props, e.g. a new value
   componentWillReceiveProps(nextProps) {
-    if (!this.state.editor) {
-      return;
-    }
-    if(nextProps.value !== this.state.editor.getValue()){
-      this.setValue(nextProps);
-      this.setCursor(nextProps);
-      //this.scrollToLocation(nextProps);
-    }
-  }
+    // Reset any changed options
+    Object.keys(nextProps.options || {}).forEach(key => this.editor.setOption(key, nextProps.options[key]));
 
-  // use this to prepare any UI specific tweaks before rendering
-  componentWillUpdate(nextProps) {
-
-    if (!this.state.editor) {
-      return false;
+    // If new value set it first
+    if(nextProps.value && nextProps.value !== this.props.value ){
+      this.editor.setValue(nextProps.value || '');
     }
 
-  }
-
-  // Set the value of the editor
-  setValue(props){
-    //console.log("editor should be: ", this.state.editor.getValue());
-    this.state.editor.setValue(props.value);
-    //console.log("editor should show: ", props.value);
-  }
-
-  // Position the cursor in the editor
-  setCursor(props){
-    this.state.editor.setCursor(props.cursor);
-    this.cursor = this.state.editor.getCursor();
-  }
-
-  // Scroll to position
-  scrollToLocation(props){
+    // If new cursor and different to preserved, then put cursor back
+    if (nextProps.cursor) {
+        if (!Helper.equals(this.props.cursor, nextProps.cursor)) {
+          this.editor.setCursor(nextProps.cursor);
+        }
+    }
 
   }
 
@@ -83,28 +73,28 @@ class Editor extends Component {
   setupEditor() {
 
     const editor = CodeMirror(
-      this.$editorWrapper.querySelector(".editor-mount"),
-      this.options
+      this.$editorWrapper.querySelector(".editor-mount")
     );
 
-    window.editor = editor; //TODO remove after manual testing
+    var options = Object.assign({},this.props.options,DEFAULT_OPTIONS);
+    Object.keys(options).forEach(key => editor.setOption(key, options[key]));
+    editor.setValue(this.props.value || '');
+    editor.setCursor(this.props.cursor);
 
-    editor.on("beforeChange", (editor, changes) => {
-      if(changes.origin === "setValue"){
-        return changes.cancel();
-      }
-      this.onChange(editor, editor.getValue())
+    editor.on("beforechange", (editor) => {
+      this.onBeforeChange(editor);
       //changes.cancel();
     });
 
-    editor.on("cursorActivity", (editor) => {
-      if(this.cursor !== editor.getCursor()){
-        //console.log(editor.getCursor())
-        this.onCursorActivity(editor);
-      }
+    editor.on("change", (editor, changes) => {
+      this.onChange(editor, editor.getValue());
     });
 
-    this.setState({ editor });
+    editor.on("cursorActivity", (editor) => {
+      this.onCursorActivity(editor);
+    });
+
+    this.editor = editor;
 
     return editor;
   }
@@ -116,26 +106,9 @@ class Editor extends Component {
 
   // Once we are about to be removed from DOM
   componentWillUnmount() {
-    if (this.state.editor) {
-      this.state.editor.destroy();
-      this.setState({ editor: null });
+    if (this.editor) {
+      this.editor.destroy();
     }
-  }
-
-  // Should we update ??
-  shouldComponentUpdate(nextProps, nextState){
-    if (!this.state.editor) {
-      return false;
-    }
-    if(nextProps.value !== this.state.editor.getValue()){
-      return true;
-    }
-    return false;
-  }
-
-  // If we did update and have new props / state
-  componentDidUpdate(prevProps, prevState) {
-    //console.log("we updated: ",this.props)
   }
 
   render() {
