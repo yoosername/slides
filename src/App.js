@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'reactstrap';
 import Header from './components/Header/Header';
 import Tabbable from './components/Tabbable/Tabbable';
 import Editor from './components/Editor/Editor';
+import ConfigEditor from './components/Editor/ConfigEditor';
 import Preview from './components/Preview/Preview';
 
 import './App.css';
@@ -14,21 +15,32 @@ export default class App extends Component {
 
     this.state = {
       activeTab: 0,
+      configEditorInitialized: false,
       configEditorValue : "Config Editor",
-      configEditorCursorPos : {line: 0, ch: 0, sticky: null},
+      configEditorCursorPos : null,
+      configEditorSelection : null,
+      contentEditorInitialized: false,
       contentEditorValue : "Content Editor",
-      contentEditorCursorPos : {line: 0, ch: 0, sticky: null}
+      contentEditorCursorPos : null,
+      contentEditorSelection : null,
     };
 
     this.toggleTab = this.toggleTab.bind(this);
+    this.toggleEvents = [function(tab){
+      if (this.state.activeTab !== tab) {
+        this.setState({
+          activeTab: tab
+        });
+      }
+    }];
+
   }
 
   toggleTab(tab) {
-    if (this.state.activeTab !== tab) {
-      this.setState({
-        activeTab: tab
-      });
-    }
+    var self = this;
+    this.toggleEvents.forEach(function(event){
+      event.call(self,tab);
+    });
   }
 
   componentDidMount(){
@@ -67,10 +79,12 @@ export default class App extends Component {
           <Col>
             <Header />
             <Tabbable activeTab={this.state.activeTab} toggle={this.toggleTab}>
-              <Editor
+              <ConfigEditor id="config"/>
+              {/* <Editor
                 id="config"
                 value={this.state.configEditorValue}
                 cursor={this.state.configEditorCursorPos}
+                selection={this.state.configEditorSelection}
                 options={{
                   mode: "javascript",
                   theme: "material"
@@ -83,28 +97,49 @@ export default class App extends Component {
                 }}
                 onCursorActivity={(editor, cursor)=>{
                   this.setState({ "configEditorCursorPos": editor.getCursor()  });
-                  //localStorage.setItem("config:cursor", JSON.stringify(editor.getCursor()));
+                  localStorage.setItem("config:cursor", JSON.stringify(editor.getCursor()));
+                }}
+                onSelection={(editor, data)=>{
+                  this.setState({ "configEditorSelection": data  });
                 }}
               />
               <Editor
                 id="content"
                 value={this.state.contentEditorValue}
                 cursor={this.state.contentEditorCursorPos}
+                selection={this.state.contentEditorSelection}
                 options={{
                   mode: "htmlmixed",
                   theme: "material"
+                }}
+                onReady={(editor) => {
+                  if(!this.state.contentEditorInitialized){
+                    this.toggleEvents.push(function(tab){
+                      if(tab === 1){
+                        console.log("Contents tab clicked, initialize the editor the first time");
+                        window.setTimeout(() => {
+                          editor.focus();
+                          this.setState({contentEditorInitialized: true});
+                        },0);
+                      }
+                    });
+                  }
                 }}
                 onBeforeChange={(editor)=>{
                   this.setState({ "contentEditorValue": editor.getValue() });
                 }}
                 onChange={(editor, val)=>{
                   localStorage.setItem("content:data", val);
+                  window.contentsEditor = editor;
                 }}
                 onCursorActivity={(editor, cursor)=>{
                   this.setState({ "contentEditorCursorPos": editor.getCursor() });
-                  //localStorage.setItem("content:cursor", JSON.stringify(editor.getCursor()));
+                  localStorage.setItem("content:cursor", JSON.stringify(editor.getCursor()));
                 }}
-              />
+                onSelection={(editor, data)=>{
+                  this.setState({ "contentEditorSelection": data  });
+                }}
+              /> */}
             </Tabbable>
           </Col>
           <Col>
