@@ -1,15 +1,18 @@
 import React from "react";
 import { connect } from "react-redux";
+import {EDITOR_DEFAULTS_CONTENT_URL} from "../../constants/editor-defaults";
 import {
   updateContentValue,
   updateContentCursor,
-  updateContentSelection
+  updateContentSelection,
+  fetchDefaultContentValue
 } from "../../state/actions/index";
 
 import Editor from './Editor';
 
 const mapStateToProps = state => {
   return {
+    active: state => (state.activeTab === 1),
     value: state.content.value,
     cursor: state.content.cursorPos,
     selection: state.content.selection
@@ -20,7 +23,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onBeforeChange: editor => dispatch(updateContentValue(editor.getValue())),
     onCursorActivity: editor => dispatch(updateContentCursor(editor.getCursor())),
-    onSelection: (selections) => dispatch(updateContentSelection(selections))
+    onSelection: (selections) => dispatch(updateContentSelection(selections)),
+    onReady: (editor) => dispatch(fetchDefaultContentValue(EDITOR_DEFAULTS_CONTENT_URL,(editor.getValue()==="")))
   };
 };
 

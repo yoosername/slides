@@ -48,36 +48,53 @@ export const receiveDefaultContentValue = (value) => {
   }
 };
 
-export const fetchDefaultConfigValue = window.fetchDefaultConfigValue = function fetchDefaultConfigValue(url) {
+export const fetchDefaultConfigValue = window.fetchDefaultConfigValue = function fetchDefaultConfigValue(url, should_fetch) {
  
   return function (dispatch) {
 
-    dispatch(requestDefaultConfigValue(url))
- 
-    return fetch('/config.js')
-      .then(
-        response => response.text(),
-        error => console.log('[error] while fetching config value: ', error)
-      )
-      .then(val =>
-        dispatch(receiveDefaultConfigValue(val))
-      )
+    if(should_fetch){
+
+      console.log('[fetchDefaultConfigValue] editor has no value so loading default');
+
+      dispatch(requestDefaultConfigValue(url))
+   
+      return fetch(url)
+        .then(
+          response => response.text(),
+          error => console.log('[fetchDefaultConfigValue] error while fetching config value: ', error)
+        )
+        .then(val =>
+          dispatch(receiveDefaultConfigValue(val))
+        )
+    }else{
+      console.log('[fetchDefaultConfigValue] not fetching as editor has value');
+    }
+
   }
 }
 
-export const fetchDefaultContentValue = window.fetchDefaultContentValue = function fetchDefaultContentValue(url) {
+export const fetchDefaultContentValue = window.fetchDefaultContentValue = function fetchDefaultContentValue(url, should_fetch) {
  
   return function (dispatch) {
 
-    dispatch(requestDefaultContentValue(url))
- 
-    return fetch('/presentation.html')
-      .then(
-        response => response.text(),
-        error => console.log('[error] while fetching config value: ', error)
-      )
-      .then(val =>
-        dispatch(receiveDefaultContentValue(val))
-      )
+    if(should_fetch){
+
+      console.log('[fetchDefaultContentValue] editor has no value so loading default');
+
+      dispatch(requestDefaultContentValue(url))
+   
+      return fetch('/presentation.html')
+        .then(
+          response => response.text(),
+          error => console.log('[error] while fetching config value: ', error)
+        )
+        .then(val =>
+          dispatch(receiveDefaultContentValue(val))
+        )
+
+    }else{
+      console.log('[fetchDefaultContentValue] not fetching as editor has value');
+    }
+
   }
 }

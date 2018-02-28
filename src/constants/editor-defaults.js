@@ -1,3 +1,6 @@
+export const EDITOR_DEFAULTS_CONFIG_URL = "/config.js";
+export const EDITOR_DEFAULTS_CONTENT_URL = "/presentation.html";
+
 const DEFAULT_EDITOR_OPTIONS = {
   enableCodeFolding: true,
   extraKeys: {},

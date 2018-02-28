@@ -38,6 +38,12 @@ class Editor extends Component {
       this.editor.setValue(nextProps.value || '');
     }
 
+    // If we are active then refresh the editor
+    if(nextProps.active){
+      console.log("Editor became active, refreshing")
+      window.setTimeout(()=>{this.editor.refresh()},0);
+    }
+
   }
 
   // Actually configure Codemirror and store it in local state
@@ -98,7 +104,7 @@ class Editor extends Component {
     }
 
     // Add to global
-    //window.editor = editor;
+    window.editor = editor;
 
     this.editor = editor;
 

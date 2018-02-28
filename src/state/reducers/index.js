@@ -22,13 +22,15 @@ const configState = {
   isFetching: false,
   value : "Config Editor",
   cursorPos : null,
-  selection : null
+  selection : null,
+  lastCached : null
 };
 const contentState = {
   isFetching: false,
   value : "Content Editor",
   cursorPos : null,
-  selection : null
+  selection : null,
+  lastCached : null
 };
 
 const tabs = (state = tabState, action) => {
