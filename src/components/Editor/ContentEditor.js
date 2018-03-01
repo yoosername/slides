@@ -5,6 +5,7 @@ import {
   updateContentValue,
   updateContentCursor,
   updateContentSelection,
+  updateContentScroll,
   fetchDefaultContentValue
 } from "../../state/actions/index";
 
@@ -15,7 +16,8 @@ const mapStateToProps = state => {
     active: state => (state.activeTab === 1),
     value: state.content.value,
     cursor: state.content.cursorPos,
-    selection: state.content.selection
+    selection: state.content.selection,
+    scrollTo: state.content.scrollTo
   };
 };
 
@@ -24,6 +26,7 @@ const mapDispatchToProps = dispatch => {
     onBeforeChange: editor => dispatch(updateContentValue(editor.getValue())),
     onCursorActivity: editor => dispatch(updateContentCursor(editor.getCursor())),
     onSelection: (selections) => dispatch(updateContentSelection(selections)),
+    onScroll: (pos) => dispatch(updateContentScroll(pos)),
     onReady: (editor) => dispatch(fetchDefaultContentValue(EDITOR_DEFAULTS_CONTENT_URL,(editor.getValue()==="")))
   };
 };

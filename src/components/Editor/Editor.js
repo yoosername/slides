@@ -24,12 +24,15 @@ class Editor extends Component {
     this.onChange = props.onChange || (() => {});
     this.onCursorActivity = props.onCursorActivity || (() => {});
     this.onSelection = props.onSelection || (() => {});
+    this.onScroll = props.onScroll || (() => {});
     this.editor = null;
 
   }
 
   // called before we receive new props, e.g. a new value
   componentWillReceiveProps(nextProps) {
+
+    console.log("ComponentWillreceiveProps: ", nextProps);
     // Reset any changed options
     Object.keys(nextProps.options || {}).forEach(key => this.editor.setOption(key, nextProps.options[key]));
 
@@ -44,11 +47,20 @@ class Editor extends Component {
       window.setTimeout(()=>{this.editor.refresh()},0);
     }
 
+    // If saved scroll position then scroll to it
+    if(nextProps.scrollTo ){
+      console.log("Scrolling to :", nextProps.scrollTo);
+      window.setTimeout(()=>{
+      this.editor.scrollTo(nextProps.scrollTo.left, nextProps.scrollTo.top);
+      },0);
+    }
+
   }
 
   // Actually configure Codemirror and store it in local state
   setupEditor() {
 
+    console.log("init props: ", this.props);
     const editor = CodeMirror(
       this.$editorWrapper.querySelector(".editor-mount")
     );
@@ -74,6 +86,11 @@ class Editor extends Component {
       editor.setSelections(this.props.selection);
       ///console.log("[Editor setup] editor.getSelections() after: ", editor.getSelections());
     }
+
+    if(this.props.scrollTo){
+      console.log("Initial scrolling to :", this.props.scrollTo);
+      editor.scrollTo(this.props.scrollTo.left, this.props.scrollTo.top);
+    }
     //console.log("setupEditor: selection set to ", this.props.selection);
 
     // Configure editor event hooks
@@ -95,6 +112,12 @@ class Editor extends Component {
 
     editor.on('beforeSelectionChange', (editor, data) => {
       this.onSelection(editor.listSelections());
+    });
+
+    editor.on('scroll', (editor) => {
+      var left = editor.getScrollInfo().left;
+      var top = editor.getScrollInfo().top;//editor.charCoords({line: editor.getCursor().line, ch: 0}, "local").top;
+      this.onScroll({left, top});
     });
     //console.log("setupEditor: events configured");
 

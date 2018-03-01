@@ -6,11 +6,13 @@ import {
   UPDATE_CONFIG_VALUE,
   UPDATE_CONFIG_CURSOR,
   UPDATE_CONFIG_SELECTION,
+  UPDATE_CONFIG_SCROLL,
   REQUEST_DEFAULT_CONFIG_VALUE,
   RECEIVE_DEFAULT_CONFIG_VALUE,
   UPDATE_CONTENT_VALUE,
   UPDATE_CONTENT_CURSOR,
   UPDATE_CONTENT_SELECTION,
+  UPDATE_CONTENT_SCROLL,
   REQUEST_DEFAULT_CONTENT_VALUE,
   RECEIVE_DEFAULT_CONTENT_VALUE
 } from "../../constants/action-types";
@@ -23,14 +25,16 @@ const configState = {
   value : "Config Editor",
   cursorPos : null,
   selection : null,
-  lastCached : null
+  lastCached : null,
+  scrollTo : { x : 0, y : 0 }
 };
 const contentState = {
   isFetching: false,
   value : "Content Editor",
   cursorPos : null,
   selection : null,
-  lastCached : null
+  lastCached : null,
+  scrollTo : { x : 0, y : 0 }
 };
 
 const tabs = (state = tabState, action) => {
@@ -45,6 +49,8 @@ const config = (state = configState, action) => {
       return { ...state, cursorPos: action.payload };
     case UPDATE_CONFIG_SELECTION:
       return { ...state, selection: action.payload };
+    case UPDATE_CONFIG_SCROLL:
+      return { ...state, scrollTo: action.payload };
     case REQUEST_DEFAULT_CONFIG_VALUE:
       return { ...state,
         isFetching: true
@@ -67,6 +73,8 @@ const content = (state = contentState, action) => {
       return { ...state, cursorPos: action.payload };
     case UPDATE_CONTENT_SELECTION:
       return { ...state, selection: action.payload };
+    case UPDATE_CONTENT_SCROLL:
+      return { ...state, scrollTo: action.payload };
     case REQUEST_DEFAULT_CONTENT_VALUE:
       return { ...state,
         isFetching: true

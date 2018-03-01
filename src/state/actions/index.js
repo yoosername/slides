@@ -5,11 +5,13 @@ import {
   UPDATE_CONFIG_VALUE,
   UPDATE_CONFIG_CURSOR,
   UPDATE_CONFIG_SELECTION,
+  UPDATE_CONFIG_SCROLL,
   REQUEST_DEFAULT_CONFIG_VALUE,
   RECEIVE_DEFAULT_CONFIG_VALUE,
   UPDATE_CONTENT_VALUE,
   UPDATE_CONTENT_CURSOR,
   UPDATE_CONTENT_SELECTION,
+  UPDATE_CONTENT_SCROLL,
   REQUEST_DEFAULT_CONTENT_VALUE,
   RECEIVE_DEFAULT_CONTENT_VALUE
 } from "../../constants/action-types";
@@ -19,9 +21,11 @@ export const toggleTab = window.toggleTab = tab => ({ type: TOGGLE_TAB, payload:
 export const updateConfigValue = val => ({ type: UPDATE_CONFIG_VALUE, payload: val });
 export const updateConfigCursor = cursor => ({ type: UPDATE_CONFIG_CURSOR, payload: cursor });
 export const updateConfigSelection = ranges => ({ type: UPDATE_CONFIG_SELECTION, payload: ranges });
+export const updateConfigScroll = pos => ({ type: UPDATE_CONFIG_SCROLL, payload: pos });
 export const updateContentValue = val => ({ type: UPDATE_CONTENT_VALUE, payload: val });
 export const updateContentCursor = cursor => ({ type: UPDATE_CONTENT_CURSOR, payload: cursor });
 export const updateContentSelection = ranges => ({ type: UPDATE_CONTENT_SELECTION, payload: ranges });
+export const updateContentScroll = pos => ({ type: UPDATE_CONTENT_SCROLL, payload: pos });
 
 // Network Actions
 export const requestDefaultConfigValue = (url) => {

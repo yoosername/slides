@@ -5,6 +5,7 @@ import {
   updateConfigValue,
   updateConfigCursor,
   updateConfigSelection,
+  updateConfigScroll,
   fetchDefaultConfigValue
 } from "../../state/actions/index";
 
@@ -15,7 +16,8 @@ const mapStateToProps = state => {
     active: state => (state.activeTab === 0),
     value: state.config.value,
     cursor: state.config.cursorPos,
-    selection: state.config.selection
+    selection: state.config.selection,
+    scrollTo: state.config.scrollTo
   };
 };
 
@@ -24,6 +26,7 @@ const mapDispatchToProps = dispatch => {
     onBeforeChange: editor => dispatch(updateConfigValue(editor.getValue())),
     onCursorActivity: editor => dispatch(updateConfigCursor(editor.getCursor())),
     onSelection: (selections) => dispatch(updateConfigSelection(selections)),
+    onScroll: (pos) => dispatch(updateConfigScroll(pos)),
     onReady: (editor) => dispatch(fetchDefaultConfigValue(EDITOR_DEFAULTS_CONFIG_URL,(editor.getValue()==="")))
   };
 };
