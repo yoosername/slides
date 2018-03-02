@@ -2,6 +2,7 @@ import thunkMiddleware from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 import { createStore, applyMiddleware } from 'redux'
 
+//import {updateLastSavedTimestamp} from "./actions/index"
 import rootReducer from "./reducers/index";
 import {loadState,saveState} from "./storage/localStorage";
 
@@ -20,7 +21,7 @@ const store = window.store = createStore(
 );
 
 // Save state to cache on changes
-store.subscribe(() => {
+store.subscribe((action) => {
   saveState(store.getState());
 });
 

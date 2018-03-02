@@ -27,12 +27,14 @@ class Editor extends Component {
     this.onScroll = props.onScroll || (() => {});
     this.editor = null;
 
+    this.refreshed = false;
+
   }
 
   // called before we receive new props, e.g. a new value
   componentWillReceiveProps(nextProps) {
 
-    console.log("ComponentWillreceiveProps: ", nextProps);
+    //console.log("ComponentWillreceiveProps: ", nextProps);
     // Reset any changed options
     Object.keys(nextProps.options || {}).forEach(key => this.editor.setOption(key, nextProps.options[key]));
 
@@ -42,14 +44,15 @@ class Editor extends Component {
     }
 
     // If we are active then refresh the editor
-    if(nextProps.active){
-      console.log("Editor became active, refreshing")
+    if(nextProps.active && !this.refreshed){
+      //console.log("Editor became active, refreshing")
       window.setTimeout(()=>{this.editor.refresh()},0);
+      this.refreshed = true;
     }
 
     // If saved scroll position then scroll to it
     if(nextProps.scrollTo ){
-      console.log("Scrolling to :", nextProps.scrollTo);
+      //console.log("Scrolling to :", nextProps.scrollTo);
       window.setTimeout(()=>{
       this.editor.scrollTo(nextProps.scrollTo.left, nextProps.scrollTo.top);
       },0);
@@ -60,7 +63,7 @@ class Editor extends Component {
   // Actually configure Codemirror and store it in local state
   setupEditor() {
 
-    console.log("init props: ", this.props);
+    //console.log("init props: ", this.props);
     const editor = CodeMirror(
       this.$editorWrapper.querySelector(".editor-mount")
     );
@@ -88,7 +91,7 @@ class Editor extends Component {
     }
 
     if(this.props.scrollTo){
-      console.log("Initial scrolling to :", this.props.scrollTo);
+      //console.log("Initial scrolling to :", this.props.scrollTo);
       editor.scrollTo(this.props.scrollTo.left, this.props.scrollTo.top);
     }
     //console.log("setupEditor: selection set to ", this.props.selection);
@@ -122,7 +125,7 @@ class Editor extends Component {
     //console.log("setupEditor: events configured");
 
     if( this.props.onReady && typeof this.props.onReady === "function" ){
-      console.log(this.props.id, " [event] onReady");
+      //console.log(this.props.id, " [event] onReady");
       this.props.onReady(editor);
     }
 
@@ -137,7 +140,7 @@ class Editor extends Component {
   // Once we have been added to DOM
   componentDidMount() {
     this.setupEditor();
-    console.log(this.props.id, " added to DOM");
+    //console.log(this.props.id, " added to DOM");
   }
 
   // Once we are about to be removed from DOM

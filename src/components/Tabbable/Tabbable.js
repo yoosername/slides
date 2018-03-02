@@ -5,6 +5,28 @@ import classnames from 'classnames';
 
 export default class Tabbable extends Component {
 
+  constructor(props){
+    super(props);
+
+    this.state = {
+      lastUpdatedTimestamp : ""
+    }
+  }
+
+  componentDidMount(){
+    this.check = window.setInterval(()=>{
+      try{
+        var t = new Date(parseInt(localStorage.getItem("lastUpdatedTimestamp"), 10));
+        var lastUpdatedTimestamp = t.getHours() + ":" + t.getMinutes() + ":" + t.getSeconds();
+        lastUpdatedTimestamp && this.setState({lastUpdatedTimestamp})
+      }catch(e){}
+    },1000);
+  }
+
+  componentWillUnmount(){
+    window.clearInterval(this.check);
+  }
+
   render() {
 
     const childrenNavLinks = React.Children.map(this.props.children, (child,idx) => {
@@ -30,11 +52,13 @@ export default class Tabbable extends Component {
       )
     });
 
+    const autosaved = (this.state.lastUpdatedTimestamp) ? `Autosaved ${this.state.lastUpdatedTimestamp}` : "";
+
     return (
       <div>
         <Nav tabs>
           {childrenNavLinks}
-          <div className="autosaveText">Autosaved @ 12:43</div>
+          <div className="autosaveText">{autosaved}</div>
         </Nav>
         <TabContent activeTab={this.props.activeTab}>
           {childrenNavContent}

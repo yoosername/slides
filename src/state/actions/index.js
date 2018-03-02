@@ -1,6 +1,7 @@
 import fetch from 'cross-fetch'; // browser compat
 
 import {
+  // UPDATE_LAST_SAVED_TIMESTAMP,
   TOGGLE_TAB,
   UPDATE_CONFIG_VALUE,
   UPDATE_CONFIG_CURSOR,
@@ -15,6 +16,9 @@ import {
   REQUEST_DEFAULT_CONTENT_VALUE,
   RECEIVE_DEFAULT_CONTENT_VALUE
 } from "../../constants/action-types";
+
+// Gloabl actions
+//export const updateLastSavedTimestamp = timestamp => ({ type: UPDATE_LAST_SAVED_TIMESTAMP, payload: timestamp });
 
 // UI Actions
 export const toggleTab = window.toggleTab = tab => ({ type: TOGGLE_TAB, payload: tab });

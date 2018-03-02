@@ -14,6 +14,7 @@ export const saveState = (state) => {
   try{
     const serializedState = JSON.stringify(state);
     localStorage.setItem("state", serializedState);
+    localStorage.setItem("lastUpdatedTimestamp", Date.now());
   }catch(err){
     //
   }

@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 
 import {
   HYDRATE,
+  // UPDATE_LAST_SAVED_TIMESTAMP,
   TOGGLE_TAB,
   UPDATE_CONFIG_VALUE,
   UPDATE_CONFIG_CURSOR,
@@ -18,7 +19,8 @@ import {
 } from "../../constants/action-types";
 
 const tabState = {
-    activeTab: 0
+    activeTab: 0,
+    // lastSavedTimestamp: ""
 }
 const configState = {
   isFetching: false,
@@ -38,7 +40,14 @@ const contentState = {
 };
 
 const tabs = (state = tabState, action) => {
-  return (action.type === TOGGLE_TAB) ? {...state, activeTab : action.payload} : state;
+  switch (action.type) {
+    case TOGGLE_TAB:
+      return {...state, activeTab : action.payload};
+    // case UPDATE_LAST_SAVED_TIMESTAMP:
+    //   return {...state, lastSavedTimestamp : action.payload};
+    default:
+      return state;
+  }
 };
 
 const config = (state = configState, action) => {
