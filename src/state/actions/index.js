@@ -14,7 +14,8 @@ import {
   UPDATE_CONTENT_SELECTION,
   UPDATE_CONTENT_SCROLL,
   REQUEST_DEFAULT_CONTENT_VALUE,
-  RECEIVE_DEFAULT_CONTENT_VALUE
+  RECEIVE_DEFAULT_CONTENT_VALUE,
+  SLIDE
 } from "../../constants/action-types";
 
 // Gloabl actions
@@ -30,6 +31,8 @@ export const updateContentValue = val => ({ type: UPDATE_CONTENT_VALUE, payload:
 export const updateContentCursor = cursor => ({ type: UPDATE_CONTENT_CURSOR, payload: cursor });
 export const updateContentSelection = ranges => ({ type: UPDATE_CONTENT_SELECTION, payload: ranges });
 export const updateContentScroll = pos => ({ type: UPDATE_CONTENT_SCROLL, payload: pos });
+
+export const slide = val => ({ type: SLIDE, payload: val });
 
 // Network Actions
 export const requestDefaultConfigValue = (url) => {

@@ -15,7 +15,8 @@ import {
   UPDATE_CONTENT_SELECTION,
   UPDATE_CONTENT_SCROLL,
   REQUEST_DEFAULT_CONTENT_VALUE,
-  RECEIVE_DEFAULT_CONTENT_VALUE
+  RECEIVE_DEFAULT_CONTENT_VALUE,
+  SLIDE
 } from "../../constants/action-types";
 
 const tabState = {
@@ -37,6 +38,9 @@ const contentState = {
   selection : null,
   lastCached : null,
   scrollTo : { x : 0, y : 0 }
+};
+const previewState = {
+  slide : { current : 0 }
 };
 
 const tabs = (state = tabState, action) => {
@@ -98,10 +102,20 @@ const content = (state = contentState, action) => {
   }
 };
 
+const preview = (state = previewState, action) => {
+  switch (action.type) {
+    case SLIDE:
+      return {...state, slide : { current : action.payload }};
+    default:
+      return state;
+  }
+};
+
 const reducers = combineReducers({
     tabs,
     config,
-    content
+    content,
+    preview
 });
 
 const rootReducer = (state = {}, action) => action.type === HYDRATE ? action.payload : reducers(state, action);

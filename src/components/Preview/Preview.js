@@ -1,7 +1,24 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
+import {
+  slide
+} from "../../state/actions/index";
+
 import './Preview.css';
 
-export default class Preview extends Component {
+const mapStateToProps = state => {
+  return {
+    state: state
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onSlide: val => dispatch(slide(val)),
+  };
+};
+
+class ConnectedPreview extends Component {
 
   // Dont rerender iframe with React because it will cause a reload
   shouldComponentUpdate() {
@@ -10,9 +27,7 @@ export default class Preview extends Component {
 
   // Use props to determine the Reveal.js config and send props as messages
   componentWillReceiveProps(nextProps) {
-    // if (this.props(MSG_PROP) !== nextProps(MSG_PROP) ) {
-    //   console.log("send message here");
-    // }
+    console.log("[IFRAME] : store has changed so we could send it via message here");
   }
 
   // When this component is loaded successully start listening for messages from iframe
@@ -45,3 +60,7 @@ export default class Preview extends Component {
     );
   }
 }
+
+const Preview = connect(mapStateToProps,mapDispatchToProps)(ConnectedPreview);
+
+export default Preview;
